@@ -1,6 +1,5 @@
 import React from 'react';
 var PIXI = require('pixi.js');
-var WebFont = require('webfontloader');
 
 class Page extends React.Component {
   constructor(props) {
@@ -19,10 +18,6 @@ class Page extends React.Component {
       stage: stage,
     };
     
-  }
-  componentWillMount() {
-
-    console.log("test 1", WebFont);
   }
 
   // animateIntro() {
