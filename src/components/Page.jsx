@@ -27,10 +27,12 @@ class Page extends React.Component {
     }
   }
 
-  render () {
+  render() {
+
+    let fontSizePX = window.innerWidth > 800 ? "60px" : window.innerWidth > 600 ? "45px" : "20px";    
     let displayText = new PIXI.Text(
       this.props.displayText,
-      {fontFamily: "Quicksand", fontSize: "60px", fill: "white", align: 'center'}
+      {fontFamily: "Quicksand", fontSize: fontSizePX, fill: "white", align: 'center'}
     );
 
     let xPos = (window.innerWidth/2) - (displayText.width/2);
