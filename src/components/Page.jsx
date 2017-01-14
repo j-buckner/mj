@@ -1,30 +1,19 @@
 import React from 'react';
+
 var PIXI = require('pixi.js');
+import {Responsive, WidthProvider} from 'react-grid-layout';
+const ResponsiveReactGridLayout = WidthProvider(Responsive);
+
+// const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 class Page extends React.Component {
-  constructor(props) {
-    super(props);
-
-    //Create the renderer
-    let width = window.innerWidth;
-    let height = window.innerHeight;
-
-    let renderer = PIXI.autoDetectRenderer(width, height, {backgroundColor: '0xAADFE3'});
-    let stage = new PIXI.Container();
-
-    this.state = {
-      renderer: renderer,
-      stage: stage, 
-    };
-    
-  }
 
   animateTextAlpha(displayText, fadeDirection) {
     
     if (fadeDirection === 1) displayText.alpha += 0.0075;
     if (fadeDirection === 0) displayText.alpha -= 0.0075;
 
-    this.state.renderer.render(this.state.stage);
+    this.props.renderer.render(this.props.stage);
 
     if (displayText.alpha > 0 && displayText.alpha < 1.3) {
       requestAnimationFrame(function(){
@@ -38,26 +27,10 @@ class Page extends React.Component {
         return;
       } else {
         this.props.pageTransition();
-        this.state.stage.removeChild(displayText);
+        this.props.stage.removeChild(displayText);
         return;
       }
     }
-  }
-
-  componentDidMount() {
-
-    let renderer = this.state.renderer;
-    let stage = this.state.stage;
-
-    //Add the canvas to the HTML document
-    let appContent = document.getElementById("story-wrapper");
-    appContent.appendChild(renderer.view);
-
-    //Tell the `renderer` to `render` the `stage`
-    renderer.view.style.position = "fixed";
-    renderer.view.style.display = "block";
-    renderer.autoResize = true;
-    renderer.render(stage);
   }
 
   render () {
@@ -76,10 +49,20 @@ class Page extends React.Component {
     displayText.position.set(xPos, yPos);
     displayText.alpha = 0;
 
-    this.state.stage.addChild(displayText);
-    this.state.renderer.render(this.state.stage);
+    this.props.stage.addChild(displayText);
+    this.props.renderer.render(this.props.stage);
 
     this.animateTextAlpha(displayText, 1);
+
+    let layouts = {
+      lg: [
+        {i: 'mainGrid', x: 0, y: 0, w: 1, h: 2, static: true},
+        {i: 'mainGrid2', x: 1, y: 0, w: 1, h: 2, static: true}
+      ], 
+      md: [{i: 'mainGrid', x: 0, y: 0, w: 1, h: 2, static: true}], 
+      sm: [{i: 'mainGrid', x: 0, y: 0, w: 1, h: 2, static: true}]
+    };
+
     return (
       <div></div>
     )
@@ -87,3 +70,10 @@ class Page extends React.Component {
 }
 
 export default Page;
+
+
+      // <ResponsiveReactGridLayout className="layout" layouts={layouts}
+      //   breakpoints={{lg: 1200, md: 996, sm: 768}}
+      //   cols={{lg: 12, md: 10, sm: 6, xs: 4, xxs: 2}}>
+      //   <div key={"mainGrid"}>1</div>
+      // </ResponsiveReactGridLayout>
