@@ -31,11 +31,16 @@ class Page extends React.Component {
         this.animateTextAlpha(displayText, fadeDirection);
       }.bind(this));
     } else if (displayText.alpha >= 1.3) {
+      if (this.props.pageNum ===3) return;
       this.animateTextAlpha(displayText, 0);
     } else if (displayText.alpha < 0) {
-      if (this.props.pageNum !== 2) this.props.pageTransition();
-      this.state.stage.removeChild(displayText);
-      return;
+      if (this.props.pageNum === 3) {
+        return;
+      } else {
+        this.props.pageTransition();
+        this.state.stage.removeChild(displayText);
+        return;
+      }
     }
   }
 
@@ -62,7 +67,13 @@ class Page extends React.Component {
       {fontFamily: "Quicksand", fontSize: "60px", fill: "white", align: 'center'}
     );
 
-    displayText.position.set((window.innerWidth/2) - (displayText.width/2), (window.innerHeight/2) - (displayText.height/2));
+    let xPos = (window.innerWidth/2) - (displayText.width/2);
+    let yPos = (window.innerHeight/2) - (displayText.height/2);
+    if (this.props.pageNum === 3) {
+      yPos = 100;
+    }
+
+    displayText.position.set(xPos, yPos);
     displayText.alpha = 0;
 
     this.state.stage.addChild(displayText);

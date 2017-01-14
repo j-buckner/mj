@@ -2,6 +2,12 @@ import React, { Component } from 'react';
 import './App.css';
 import Page from './components/Page';
 
+const pageNumToDisplayText = {
+  1: "let's go on an adventure",
+  2: "let's go somewhere far away",
+  3: "where shall we go?"
+}
+
 class App extends Component {
   constructor() {
     super();
@@ -16,12 +22,7 @@ class App extends Component {
 
   pageTransition() {
     let nextPage = this.state.pageNum + 1;
-    var nextDisplayText = "";
-    if (nextPage === 2) {
-      nextDisplayText = "let's go somewhere far away";
-    }
-
-    this.setState({pageNum: nextPage, displayText: nextDisplayText})
+    this.setState({pageNum: nextPage, displayText: pageNumToDisplayText[nextPage]})
   }
 
   render() {
