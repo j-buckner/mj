@@ -3,6 +3,23 @@ var PIXI = require('pixi.js');
 
 class Page extends React.Component {
 
+  displayOptions() {
+    let options = this.props.displayData.options;
+    let optionText = new PIXI.Text(
+      options[0],
+      {fontFamily: 'Quicksand', fontSize: '30px', fill: 'white', align: 'center', letterSpacing: 3}
+    );
+
+    let xPos = 185;
+    let yPos = window.innerHeight - 235;
+
+    optionText.position.set(xPos, yPos);
+    optionText.alpha = 1;
+
+    this.props.stage.addChild(optionText);
+    this.props.renderer.render(this.props.stage);
+  }
+
   animateTextAlpha(displayText, fadeDirection) {
     if (fadeDirection === 1) displayText.alpha += 0.0075;
     if (fadeDirection === 0) displayText.alpha -= 0.0075;
@@ -14,7 +31,10 @@ class Page extends React.Component {
         this.animateTextAlpha(displayText, fadeDirection);
       }.bind(this));
     } else if (displayText.alpha >= 1.3) {
-      if (this.props.pageNum === 3) return;
+      if (this.props.pageNum === 3) {
+        this.displayOptions();
+        return;
+      } 
       this.animateTextAlpha(displayText, 0);
     } else if (displayText.alpha < 0) {
       if (this.props.pageNum === 3) {
@@ -32,7 +52,7 @@ class Page extends React.Component {
     let fontSizePX = window.innerWidth > 800 ? "60px" : window.innerWidth > 600 ? "45px" : "20px";    
     let displayText = new PIXI.Text(
       this.props.displayData.mainText,
-      {fontFamily: "Quicksand", fontSize: fontSizePX, fill: "white", align: 'center'}
+      {fontFamily: 'Quicksand', fontSize: fontSizePX, fill: 'white', align: 'center', letterSpacing: 3}
     );
 
     let xPos = (window.innerWidth/2) - (displayText.width/2);

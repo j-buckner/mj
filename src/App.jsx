@@ -7,13 +7,13 @@ var PIXI = require('pixi.js');
 const pageNumToDisplayData = {
   1: { 
     mainText: "let's go on an adventure",
-    options: ["the forest", "the mountain", "the sea"]
   },
   2: {
     mainText: "let's go somewhere far away",
   },
   3: {
    mainText: "where shall we go?",
+   options: ["the forest", "the mountain", "the sea"]
   }
 }
 
