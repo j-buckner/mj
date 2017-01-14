@@ -14,7 +14,7 @@ class Page extends React.Component {
         this.animateTextAlpha(displayText, fadeDirection);
       }.bind(this));
     } else if (displayText.alpha >= 1.3) {
-      if (this.props.pageNum ===3) return;
+      if (this.props.pageNum === 3) return;
       this.animateTextAlpha(displayText, 0);
     } else if (displayText.alpha < 0) {
       if (this.props.pageNum === 3) {
@@ -31,7 +31,7 @@ class Page extends React.Component {
 
     let fontSizePX = window.innerWidth > 800 ? "60px" : window.innerWidth > 600 ? "45px" : "20px";    
     let displayText = new PIXI.Text(
-      this.props.displayText,
+      this.props.displayData.mainText,
       {fontFamily: "Quicksand", fontSize: fontSizePX, fill: "white", align: 'center'}
     );
 
