@@ -9,64 +9,34 @@ class Page extends React.Component {
     let width = window.innerWidth;
     let height = window.innerHeight;
 
-    var renderer = PIXI.autoDetectRenderer(width, height, {backgroundColor: '0xAADFE3'});
+    let renderer = PIXI.autoDetectRenderer(width, height, {backgroundColor: '0xAADFE3'});
+    let stage = new PIXI.Container();
 
-    //Create a container object called the `stage`
-    var stage = new PIXI.Container();
     this.state = {
       renderer: renderer,
-      stage: stage,
+      stage: stage, 
     };
     
   }
 
-  // animateIntro() {
-  //   // let message = new PIXI.Text(
-  //   //   "",
-  //   //   {fontFamily: "Quicksand", fontSize: "60px", fill: "white", align: 'center'}
-  //   // );
+  animateTextAlpha(displayText, fadeDirection) {
+    
+    if (fadeDirection === 1) displayText.alpha += 0.0075;
+    if (fadeDirection === 0) displayText.alpha -= 0.0075;
 
-  //   // message.position.set((window.innerWidth/2) - (message.width/2), (window.innerHeight/2) - (message.height/2));
-  //   // message.alpha = 0;
-
-  //   // this.state.stage.addChild(message);
-  //   // this.state.renderer.render(this.state.stage);
-  //   let text = "let's go on an adventure";
-
-  //   let offset = 0;
-  //   for(let i = 0; i < text.length; i++) {
-  //     console.log("i is at ", i);
-  //     let letter = new PIXI.Text(text[i], {fontFamily: "Quicksand", fontSize: "60px", fill: "white", align: 'center'});
-  //     let xPos = offset;
-  //     if (i == 1) xPos = 12; 
-  //     letter.position.set((((window.innerWidth/2) - 300) + xPos ), (window.innerHeight/2) - (letter.height/2));
-  //     letter.alpha = 0;
-  //     this.state.stage.addChild(letter);
-  //     this.animateLetter(letter);
-  //     offset += 35;
-  //   }
-
-  // }
-
-  // animateLetter(letter) {
-  //   if (letter.alpha >= 1) return;
-
-  //   requestAnimationFrame(function(){
-  //     this.animateLetter(letter);
-  //   }.bind(this));
-
-  //   letter.alpha += 0.01;
-  //   this.state.renderer.render(this.state.stage);
-  // }
-
-  animateIntro(message) {
-    if (message.alpha >= 1) return;
-    requestAnimationFrame(function(){
-      this.animateIntro(message);
-    }.bind(this));
-
-    message.alpha += 0.01;
     this.state.renderer.render(this.state.stage);
+
+    if (displayText.alpha > 0 && displayText.alpha < 1.3) {
+      requestAnimationFrame(function(){
+        this.animateTextAlpha(displayText, fadeDirection);
+      }.bind(this));
+    } else if (displayText.alpha >= 1.3) {
+      this.animateTextAlpha(displayText, 0);
+    } else if (displayText.alpha < 0) {
+      if (this.props.pageNum !== 2) this.props.pageTransition();
+      this.state.stage.removeChild(displayText);
+      return;
+    }
   }
 
   componentDidMount() {
@@ -83,24 +53,22 @@ class Page extends React.Component {
     renderer.view.style.display = "block";
     renderer.autoResize = true;
     renderer.render(stage);
-    console.log("test 2");
-
-    let message = new PIXI.Text(
-      "let's go on an adventure",
-      {fontFamily: "Quicksand", fontSize: "60px", fill: "white", align: 'center'}
-    );
-
-    message.position.set((window.innerWidth/2) - (message.width/2), (window.innerHeight/2) - (message.height/2));
-
-    message.alpha = 0;
-
-    stage.addChild(message);
-    renderer.render(stage);
-
-    this.animateIntro(message);
   }
 
   render () {
+    
+    let displayText = new PIXI.Text(
+      this.props.displayText,
+      {fontFamily: "Quicksand", fontSize: "60px", fill: "white", align: 'center'}
+    );
+
+    displayText.position.set((window.innerWidth/2) - (displayText.width/2), (window.innerHeight/2) - (displayText.height/2));
+    displayText.alpha = 0;
+
+    this.state.stage.addChild(displayText);
+    this.state.renderer.render(this.state.stage);
+
+    this.animateTextAlpha(displayText, 1);
     return (
       <div></div>
     )
