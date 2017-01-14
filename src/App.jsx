@@ -52,12 +52,10 @@ class App extends Component {
 
   render() {
     return (
-      <div id="main-wrapper">        
-        <Page pageNum={this.state.pageNum} 
-              pageTransition={this.pageTransition} 
-              displayText={this.state.displayText} 
-              renderer={this.state.renderer}
-              stage={this.state.stage} />          
+      <div id="main-wrapper">
+        <Page pageNum={this.state.pageNum} pageTransition={this.pageTransition}
+            displayText={this.state.displayText} renderer={this.state.renderer}
+            stage={this.state.stage} /> 
       </div>
     );
   }
