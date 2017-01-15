@@ -5,18 +5,39 @@ class Page extends React.Component {
 
   displayOptions() {
     let options = this.props.displayData.options;
-    let optionText = new PIXI.Text(
+    let optionTextOne = new PIXI.Text(
       options[0],
       {fontFamily: 'Quicksand', fontSize: '30px', fill: 'white', align: 'center', letterSpacing: 3}
     );
 
-    let xPos = 185;
+    let optionTextTwo = new PIXI.Text(
+      options[1],
+      {fontFamily: 'Quicksand', fontSize: '30px', fill: 'white', align: 'center', letterSpacing: 3}
+    );
+
+    let optionTextThree = new PIXI.Text(
+      options[2],
+      {fontFamily: 'Quicksand', fontSize: '30px', fill: 'white', align: 'center', letterSpacing: 3}
+    );
+
+    let xPosOne = 0.1284 * window.innerWidth;
+    let xPosTwo = 0.4118 * window.innerWidth;
+    let xPosThree = 0.7188 * window.innerWidth;
+  
     let yPos = window.innerHeight - 235;
 
-    optionText.position.set(xPos, yPos);
-    optionText.alpha = 1;
+    optionTextOne.position.set(xPosOne, yPos);
+    optionTextTwo.position.set(xPosTwo, yPos);
+    optionTextThree.position.set(xPosThree, yPos);
 
-    this.props.stage.addChild(optionText);
+    optionTextOne.alpha = 1;
+    optionTextTwo.alpha = 1;
+    optionTextThree.alpha = 1;
+
+    this.props.stage.addChild(optionTextOne);
+    this.props.stage.addChild(optionTextTwo);
+    this.props.stage.addChild(optionTextThree);
+
     this.props.renderer.render(this.props.stage);
   }
 
@@ -48,7 +69,6 @@ class Page extends React.Component {
   }
 
   render() {
-
     let fontSizePX = window.innerWidth > 800 ? "60px" : window.innerWidth > 600 ? "45px" : "20px";    
     let displayText = new PIXI.Text(
       this.props.displayData.mainText,
