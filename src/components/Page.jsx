@@ -1,11 +1,33 @@
 import React from 'react';
+var canvas = document.getElementById('canvas-content');
+var ctx = canvas.getContext('2d');  
+
+function sleep (time) {
+  return new Promise((resolve) => setTimeout(resolve, time));
+}
 
 class Page extends React.Component {
+  constructor() {
+    super();
 
-  drawText(txt) {
+    this.displayOptions = this.displayOptions.bind(this);
+    this.fadeOutText = this.fadeOutText.bind(this);
+    this.drawText = this.drawText.bind(this);
+  }
+
+  displayOptions() {
+    let options = this.props.displayData.options;
+    console.log(options);
+  }
+
+  fadeOutText(txt) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    this.props.pageTransition();
+    return;
+  }
+
+  drawText(txt, callback) {
     let fontSizePX = window.innerWidth > 800 ? "55px" : window.innerWidth > 600 ? "45px" : "20px";
-    let canvas = document.getElementById('canvas-content');    
-    let ctx = canvas.getContext('2d')
 
     let dashLen = 220;
     let dashOffset = dashLen;
@@ -14,16 +36,33 @@ class Page extends React.Component {
     let y = (window.innerHeight / 2) - 100;
     let i = 0;
 
+    if (this.props.pageNum === 3) {
+      y = 100;
+      x = (window.innerWidth / 2) - 320;
+    } 
+
     ctx.font = fontSizePX + " quicksandregular"; 
-    ctx.lineWidth = 5; 
+    // ctx.lineWidth = 10; 
     ctx.lineJoin = "round"; 
     ctx.globalAlpha = 2/3;
     ctx.strokeStyle = "white";
     ctx.fillStyle = "white";
 
+    let pageNum = this.props.pageNum;
+
     (function loop() {
-      ctx.strokeStyle = "white";
-      ctx.fillStyle = "white";
+
+      if (i > 14 && i < 24 && pageNum === 1) {
+        ctx.strokeStyle = "#D5A217";
+        ctx.fillStyle = "#D5A217";
+      } else if (i > 18 && i < 27 && pageNum === 2) {
+        ctx.strokeStyle = "#D5A217";
+        ctx.fillStyle = "#D5A217";
+      } else {
+        ctx.strokeStyle = "white";
+        ctx.fillStyle = "white";  
+      }
+
       ctx.font = fontSizePX + " quicksandregular";
       ctx.clearRect(x, 0, 60, 150);
       ctx.setLineDash([dashLen - dashOffset, dashOffset - speed]); // create a long dash mask
@@ -37,46 +76,21 @@ class Page extends React.Component {
         x += ctx.measureText(txt[i++]).width + ctx.lineWidth * Math.random();
         // ctx.setTransform(1, 0, 0, 1, 0, 3 * Math.random());        // random y-delta
         // ctx.rotate(Math.random() * 0.005);                         // random rotation
-        if (i < txt.length) requestAnimationFrame(loop);
+        if (i < txt.length) {
+          requestAnimationFrame(loop);
+        } else {
+          sleep(1500).then(() => {
+            callback(txt);
+          });
+          
+        }
       }
     })();
   }
 
-  render() {
-    // let fontSizePX = window.innerWidth > 800 ? "55px" : window.innerWidth > 600 ? "45px" : "20px";    
-    // let displayText = new PIXI.Text(
-    //   this.props.displayData.mainText,
-    //   {fontFamily: 'Quicksand', fontSize: fontSizePX, fill: 'white', align: 'center', letterSpacing: 5, fontWeight: 'lighter'}
-    // );
-
-    // let xPos = (window.innerWidth/2) - (displayText.width/2);
-    // let yPos = (window.innerHeight/2) - ((displayText.height/2) + 35);
-    // if (this.props.pageNum === 3) {
-    //   yPos = 100;
-    // }
-
-    // let canvas = document.getElementById('canvas-content');
-    // var ctx = canvas.getContext('2d');
-
-    // let dashLen = 220;
-    // let dashOffset = dashLen;
-    // let speed = 5;
-    // let txt = this.props.displayData.mainText
-    // let x = 30;
-    // let i = 0;
-
-    // let font = fontSizePX + " quicksandregular"
-    // ctx.font = font; 
-
-    // console.log(ctx.font);
-    // ctx.lineWidth = 5; ctx.lineJoin = "round"; ctx.globalAlpha = 2/3;
-    // ctx.strokeStyle = ctx.fillStyle = "#1f2f90";
-
-    // this.drawText(ctx, dashLen, dashOffset, speed, txt, x, i, font);
-
-
-    this.drawText(this.props.displayData.mainText);
-
+  render() {    
+    let callback = (this.props.pageNum === 3) ? this.displayOptions : this.fadeOutText;
+    this.drawText(this.props.displayData.mainText, callback);
     return (
       <div></div>
     )
