@@ -29,10 +29,40 @@ class App extends Component {
 
   componentDidMount() {
     let canvas = document.getElementById('canvas-content');
+    let context = canvas.getContext('2d');  
     
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     canvas.style.backgroundColor = '#AADFE3';
+
+    // finally query the various pixel ratios
+    let devicePixelRatio = window.devicePixelRatio || 1;
+    let backingStoreRatio = context.webkitBackingStorePixelRatio ||
+                        context.mozBackingStorePixelRatio ||
+                        context.msBackingStorePixelRatio ||
+                        context.oBackingStorePixelRatio ||
+                        context.backingStorePixelRatio || 1;
+
+    let ratio = devicePixelRatio / backingStoreRatio;
+
+    // upscale the canvas if the two ratios don't match
+    if (devicePixelRatio !== backingStoreRatio) {
+
+        var oldWidth = canvas.width;
+        var oldHeight = canvas.height;
+
+        canvas.width = oldWidth * ratio;
+        canvas.height = oldHeight * ratio;
+
+        canvas.style.width = oldWidth + 'px';
+        canvas.style.height = oldHeight + 'px';
+
+        // now scale the context to counter
+        // the fact that we've manually scaled
+        // our canvas element
+        context.scale(ratio, ratio);
+
+    }
   }
 
   pageTransition() {

@@ -10,6 +10,8 @@ class Page extends React.Component {
   constructor() {
     super();
 
+    this.drawCircle = this.drawCircle.bind(this);
+    this.animateDisplayGroup = this.animateDisplayGroup.bind(this);
     this.displayOptions = this.displayOptions.bind(this);
     this.fadeOutText = this.fadeOutText.bind(this);
     this.drawText = this.drawText.bind(this);
@@ -19,14 +21,42 @@ class Page extends React.Component {
     console.log('yay!');
   }
 
+  animateDisplayGroup(option, x, y, current, curPerc, fontSizePX) {
+    this.drawCircle(option, x + 60, y, current, curPerc);
+    this.drawText(option, fontSizePX, x, window.innerHeight - 100, this.displayOptions);
+  }
+
+  drawCircle(option, x, y, current, curPerc) {
+    // console.log(x, y, current, curPerc);
+    var radius = 120;
+    var endPercent = 100;
+    var circ = Math.PI * 2;
+    var quart = Math.PI / 2;
+
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = 'white';
+    ctx.beginPath();
+    ctx.arc(x, y, radius, -(quart), ((circ) * current) - quart, false);
+    ctx.stroke();
+    curPerc = curPerc + 1;
+    console.log(curPerc, endPercent);
+    if (curPerc < endPercent + 1) {
+      requestAnimationFrame(function () {
+        this.drawCircle(option, x, y, curPerc / 100, curPerc)
+      }.bind(this));
+    } else {
+      // this.displayOptions(option);
+    }
+  }
+
   displayOptions(option) {
     let options = this.props.displayData.options;
     let index = options.indexOf(option);
 
     let indexToX = {
-      0: 200,
-      1: 600,
-      2: 1000
+      0: 240,
+      1: 640,
+      2: 1090
     }
 
     if (index === options.length - 1) {
@@ -35,8 +65,7 @@ class Page extends React.Component {
     } 
 
     index = index === -1 ? 0 : index + 1;
-    
-    this.drawText(options[index], '30px', indexToX[index], window.innerHeight - 100, this.displayOptions);
+    this.animateDisplayGroup(options[index], indexToX[index], window.innerHeight - 300, 0, 0, '30px')
   }
 
   fadeOutText(txt) {
@@ -46,21 +75,20 @@ class Page extends React.Component {
   }
 
   drawText(txt, fontSizePX, x, y, callback) {
-
-    let dashLen = 220;
+    console.log('3');
+    let pageNum = this.props.pageNum;
+    let dashLen = 200;
     let dashOffset = dashLen;
-    let speed = 30;
+    let speed = 40;
     let i = 0;
 
     ctx.font = fontSizePX + " quicksandregular"; 
-    // ctx.lineWidth = 10; 
+    ctx.lineWidth = 1; 
     ctx.lineJoin = "round"; 
-    ctx.globalAlpha = 2/3;
+    // ctx.globalAlpha = 2/3;
     ctx.strokeStyle = "white";
     ctx.fillStyle = "white";
 
-    let pageNum = this.props.pageNum;
-    console.log(x, y);
     (function loop() {
 
       if (i > 14 && i < 24 && pageNum === 1) {
@@ -92,6 +120,7 @@ class Page extends React.Component {
         } else {
           sleep(1500).then(() => {
             callback(txt);
+            return;
           });
           
         }
