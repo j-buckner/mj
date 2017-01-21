@@ -1,93 +1,81 @@
 import React from 'react';
-var PIXI = require('pixi.js');
 
 class Page extends React.Component {
 
-  displayOptions() {
-    let options = this.props.displayData.options;
-    let optionTextOne = new PIXI.Text(
-      options[0],
-      {fontFamily: 'Quicksand', fontSize: '30px', fill: 'white', align: 'center', letterSpacing: 3}
-    );
+  drawText(txt) {
+    let fontSizePX = window.innerWidth > 800 ? "55px" : window.innerWidth > 600 ? "45px" : "20px";
+    let canvas = document.getElementById('canvas-content');    
+    let ctx = canvas.getContext('2d')
 
-    let optionTextTwo = new PIXI.Text(
-      options[1],
-      {fontFamily: 'Quicksand', fontSize: '30px', fill: 'white', align: 'center', letterSpacing: 3}
-    );
+    let dashLen = 220;
+    let dashOffset = dashLen;
+    let speed = 30;
+    let x = (window.innerWidth / 2) - 450;
+    let y = (window.innerHeight / 2) - 100;
+    let i = 0;
 
-    let optionTextThree = new PIXI.Text(
-      options[2],
-      {fontFamily: 'Quicksand', fontSize: '30px', fill: 'white', align: 'center', letterSpacing: 3}
-    );
+    ctx.font = fontSizePX + " quicksandregular"; 
+    ctx.lineWidth = 5; 
+    ctx.lineJoin = "round"; 
+    ctx.globalAlpha = 2/3;
+    ctx.strokeStyle = "white";
+    ctx.fillStyle = "white";
 
-    let xPosOne = 0.1284 * window.innerWidth;
-    let xPosTwo = 0.4118 * window.innerWidth;
-    let xPosThree = 0.7188 * window.innerWidth;
-  
-    let yPos = window.innerHeight - 235;
+    (function loop() {
+      ctx.strokeStyle = "white";
+      ctx.fillStyle = "white";
+      ctx.font = fontSizePX + " quicksandregular";
+      ctx.clearRect(x, 0, 60, 150);
+      ctx.setLineDash([dashLen - dashOffset, dashOffset - speed]); // create a long dash mask
+      dashOffset -= speed;                                         // reduce dash length
+      ctx.strokeText(txt[i], x, y);                               // stroke letter
 
-    optionTextOne.position.set(xPosOne, yPos);
-    optionTextTwo.position.set(xPosTwo, yPos);
-    optionTextThree.position.set(xPosThree, yPos);
-
-    optionTextOne.alpha = 1;
-    optionTextTwo.alpha = 1;
-    optionTextThree.alpha = 1;
-
-    this.props.stage.addChild(optionTextOne);
-    this.props.stage.addChild(optionTextTwo);
-    this.props.stage.addChild(optionTextThree);
-
-    this.props.renderer.render(this.props.stage);
-  }
-
-  animateTextAlpha(displayText, fadeDirection) {
-    if (fadeDirection === 1) displayText.alpha += 0.0075;
-    if (fadeDirection === 0) displayText.alpha -= 0.0075;
-
-    this.props.renderer.render(this.props.stage);
-
-    if (displayText.alpha > 0 && displayText.alpha < 1.3) {
-      requestAnimationFrame(function(){
-        this.animateTextAlpha(displayText, fadeDirection);
-      }.bind(this));
-    } else if (displayText.alpha >= 1.3) {
-      if (this.props.pageNum === 3) {
-        this.displayOptions();
-        return;
-      } 
-      this.animateTextAlpha(displayText, 0);
-    } else if (displayText.alpha < 0) {
-      if (this.props.pageNum === 3) {
-        return;
-      } else {
-        this.props.pageTransition();
-        this.props.stage.removeChild(displayText);
-        return;
+      if (dashOffset > 0) requestAnimationFrame(loop);             // animate
+      else {
+        ctx.fillText(txt[i], x, y);                               // fill final letter
+        dashOffset = dashLen;                                      // prep next char
+        x += ctx.measureText(txt[i++]).width + ctx.lineWidth * Math.random();
+        // ctx.setTransform(1, 0, 0, 1, 0, 3 * Math.random());        // random y-delta
+        // ctx.rotate(Math.random() * 0.005);                         // random rotation
+        if (i < txt.length) requestAnimationFrame(loop);
       }
-    }
+    })();
   }
 
   render() {
-    let fontSizePX = window.innerWidth > 800 ? "60px" : window.innerWidth > 600 ? "45px" : "20px";    
-    let displayText = new PIXI.Text(
-      this.props.displayData.mainText,
-      {fontFamily: 'Quicksand', fontSize: fontSizePX, fill: 'white', align: 'center', letterSpacing: 3}
-    );
+    // let fontSizePX = window.innerWidth > 800 ? "55px" : window.innerWidth > 600 ? "45px" : "20px";    
+    // let displayText = new PIXI.Text(
+    //   this.props.displayData.mainText,
+    //   {fontFamily: 'Quicksand', fontSize: fontSizePX, fill: 'white', align: 'center', letterSpacing: 5, fontWeight: 'lighter'}
+    // );
 
-    let xPos = (window.innerWidth/2) - (displayText.width/2);
-    let yPos = (window.innerHeight/2) - (displayText.height/2);
-    if (this.props.pageNum === 3) {
-      yPos = 100;
-    }
+    // let xPos = (window.innerWidth/2) - (displayText.width/2);
+    // let yPos = (window.innerHeight/2) - ((displayText.height/2) + 35);
+    // if (this.props.pageNum === 3) {
+    //   yPos = 100;
+    // }
 
-    displayText.position.set(xPos, yPos);
-    displayText.alpha = 0;
+    // let canvas = document.getElementById('canvas-content');
+    // var ctx = canvas.getContext('2d');
 
-    this.props.stage.addChild(displayText);
-    this.props.renderer.render(this.props.stage);
+    // let dashLen = 220;
+    // let dashOffset = dashLen;
+    // let speed = 5;
+    // let txt = this.props.displayData.mainText
+    // let x = 30;
+    // let i = 0;
 
-    this.animateTextAlpha(displayText, 1);
+    // let font = fontSizePX + " quicksandregular"
+    // ctx.font = font; 
+
+    // console.log(ctx.font);
+    // ctx.lineWidth = 5; ctx.lineJoin = "round"; ctx.globalAlpha = 2/3;
+    // ctx.strokeStyle = ctx.fillStyle = "#1f2f90";
+
+    // this.drawText(ctx, dashLen, dashOffset, speed, txt, x, i, font);
+
+
+    this.drawText(this.props.displayData.mainText);
 
     return (
       <div></div>

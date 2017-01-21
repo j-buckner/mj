@@ -1,7 +1,10 @@
-body {
-  font-family: 'Quicksand', sans-serif;
+@font-face {
+  font-family: 'quicksandregular';
+  src: url('assets/fonts/quicksand-regular-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
 }
 
-#story-wrapper {
-  height: 100vh;
+body {
+  font-family: 'quicksandregular';
 }
