@@ -15,9 +15,28 @@ class Page extends React.Component {
     this.drawText = this.drawText.bind(this);
   }
 
-  displayOptions() {
+  finishedDisplayOptions() {
+    console.log('yay!');
+  }
+
+  displayOptions(option) {
     let options = this.props.displayData.options;
-    console.log(options);
+    let index = options.indexOf(option);
+
+    let indexToX = {
+      0: 200,
+      1: 600,
+      2: 1000
+    }
+
+    if (index === options.length - 1) {
+      this.finishedDisplayOptions();
+      return;
+    } 
+
+    index = index === -1 ? 0 : index + 1;
+    
+    this.drawText(options[index], '30px', indexToX[index], window.innerHeight - 100, this.displayOptions);
   }
 
   fadeOutText(txt) {
@@ -26,20 +45,12 @@ class Page extends React.Component {
     return;
   }
 
-  drawText(txt, callback) {
-    let fontSizePX = window.innerWidth > 800 ? "55px" : window.innerWidth > 600 ? "45px" : "20px";
+  drawText(txt, fontSizePX, x, y, callback) {
 
     let dashLen = 220;
     let dashOffset = dashLen;
     let speed = 30;
-    let x = (window.innerWidth / 2) - 450;
-    let y = (window.innerHeight / 2) - 100;
     let i = 0;
-
-    if (this.props.pageNum === 3) {
-      y = 100;
-      x = (window.innerWidth / 2) - 320;
-    } 
 
     ctx.font = fontSizePX + " quicksandregular"; 
     // ctx.lineWidth = 10; 
@@ -49,7 +60,7 @@ class Page extends React.Component {
     ctx.fillStyle = "white";
 
     let pageNum = this.props.pageNum;
-
+    console.log(x, y);
     (function loop() {
 
       if (i > 14 && i < 24 && pageNum === 1) {
@@ -64,7 +75,7 @@ class Page extends React.Component {
       }
 
       ctx.font = fontSizePX + " quicksandregular";
-      ctx.clearRect(x, 0, 60, 150);
+      // ctx.clearRect(x, 0, 60, 150);
       ctx.setLineDash([dashLen - dashOffset, dashOffset - speed]); // create a long dash mask
       dashOffset -= speed;                                         // reduce dash length
       ctx.strokeText(txt[i], x, y);                               // stroke letter
@@ -90,7 +101,18 @@ class Page extends React.Component {
 
   render() {    
     let callback = (this.props.pageNum === 3) ? this.displayOptions : this.fadeOutText;
-    this.drawText(this.props.displayData.mainText, callback);
+
+    let x = (window.innerWidth / 2) - 450;
+    let y = (window.innerHeight / 2) - 100;
+
+    let fontSizePX = window.innerWidth > 800 ? "55px" : window.innerWidth > 600 ? "45px" : "20px";
+
+    if (this.props.pageNum === 3) {
+      y = 100;
+      x = (window.innerWidth / 2) - 320;
+    } 
+    
+    this.drawText(this.props.displayData.mainText, fontSizePX, x, y, callback);
     return (
       <div></div>
     )
