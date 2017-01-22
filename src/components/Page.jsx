@@ -14,6 +14,7 @@ class Page extends React.Component {
     this.animateDisplayGroup = this.animateDisplayGroup.bind(this);
     this.displayOptions = this.displayOptions.bind(this);
     this.fadeOutText = this.fadeOutText.bind(this);
+    this.animateTextAlpha = this.animateTextAlpha.bind(this);
     this.drawText = this.drawText.bind(this);
   }
 
@@ -27,7 +28,6 @@ class Page extends React.Component {
   }
 
   drawCircle(option, x, y, current, curPerc) {
-    // console.log(x, y, current, curPerc);
     var radius = 120;
     var endPercent = 100;
     var circ = Math.PI * 2;
@@ -38,8 +38,8 @@ class Page extends React.Component {
     ctx.beginPath();
     ctx.arc(x, y, radius, -(quart), ((circ) * current) - quart, false);
     ctx.stroke();
-    curPerc = curPerc + 1;
-    console.log(curPerc, endPercent);
+    curPerc += 1;
+    
     if (curPerc < endPercent + 1) {
       requestAnimationFrame(function () {
         this.drawCircle(option, x, y, curPerc / 100, curPerc)
@@ -68,64 +68,77 @@ class Page extends React.Component {
     this.animateDisplayGroup(options[index], indexToX[index], window.innerHeight - 300, 0, 0, '30px')
   }
 
-  fadeOutText(txt) {
+  fadeOutText(text) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     this.props.pageTransition();
     return;
   }
 
-  drawText(txt, fontSizePX, x, y, callback) {
-    console.log('3');
-    let pageNum = this.props.pageNum;
-    let dashLen = 200;
-    let dashOffset = dashLen;
-    let speed = 40;
-    let i = 0;
+  animateTextAlpha(text, font, letterIndex, prevLetterXPos, letterXPos, letterYPos, letterAlpha, callback) {
 
-    ctx.font = fontSizePX + " quicksandregular"; 
+    letterAlpha += 0.001;
+    if (prevLetterXPos !== -1 ) {
+
+      let prevLetterAlpha = (letterIndex === text.length) ? letterAlpha + 0.7 : letterAlpha + 0.1;
+      if (letterIndex > 14 && letterIndex < 25 && this.props.pageNum === 1) {
+        ctx.fillStyle = "rgba(213, 162, 23, "+prevLetterAlpha+")";
+      } else if (letterIndex > 18 && letterIndex < 28 && this.props.pageNum === 2) {
+        ctx.fillStyle = "rgba(213, 162, 23, "+prevLetterAlpha+")";
+      } else {
+        ctx.fillStyle = "rgba(255, 255, 255, "+prevLetterAlpha+")";
+      }
+
+      ctx.font = font;
+      ctx.fillText(text[letterIndex - 1], prevLetterXPos, letterYPos);
+    }
+
+    // base case
+    if (letterIndex === text.length) {
+      sleep(1500).then(() => {
+        callback(text);
+        return;
+      });
+      return;
+    }
+
+    if (letterIndex > 14 && letterIndex < 24 && this.props.pageNum === 1) {
+      ctx.fillStyle = "rgba(213, 162, 23, "+letterAlpha+")";
+    } else if (letterIndex > 18 && letterIndex < 27 && this.props.pageNum === 2) {
+      ctx.fillStyle = "rgba(213, 162, 23, "+letterAlpha+")";
+    } else {
+      ctx.fillStyle = "rgba(255, 255, 255, "+letterAlpha+")";
+    }
+
+    ctx.font = font;
+    ctx.fillText(text[letterIndex], letterXPos, letterYPos);
+
+    if (letterAlpha < 0.02) {
+      requestAnimationFrame(function () {
+        this.animateTextAlpha(text, font, letterIndex, prevLetterXPos, letterXPos, letterYPos, letterAlpha, callback);
+      }.bind(this));
+    }
+
+    if (letterAlpha >= 0.02 && letterAlpha < 1) {
+      ctx.fillText(text[letterIndex], letterXPos, letterYPos);  
+      let nextLetterXPos = letterXPos + ctx.measureText(text[letterIndex++]).width + ctx.lineWidth * Math.random();
+      requestAnimationFrame(function () {
+        this.animateTextAlpha(text, font, letterIndex, letterXPos, nextLetterXPos, letterYPos, 0.005, callback);
+      }.bind(this));
+    }
+
+  }
+
+  drawText(text, fontSizePX, x, y, callback) {
+    let font = fontSizePX + " quicksandregular";
+    let i = 0;
+    let alpha = 0.005;
+
+    ctx.font = font;
     ctx.lineWidth = 1; 
     ctx.lineJoin = "round"; 
-    // ctx.globalAlpha = 2/3;
-    ctx.strokeStyle = "white";
-    ctx.fillStyle = "white";
+    ctx.fillStyle = "rgba(255, 255, 255, "+alpha+")";
 
-    (function loop() {
-
-      if (i > 14 && i < 24 && pageNum === 1) {
-        ctx.strokeStyle = "#D5A217";
-        ctx.fillStyle = "#D5A217";
-      } else if (i > 18 && i < 27 && pageNum === 2) {
-        ctx.strokeStyle = "#D5A217";
-        ctx.fillStyle = "#D5A217";
-      } else {
-        ctx.strokeStyle = "white";
-        ctx.fillStyle = "white";  
-      }
-
-      ctx.font = fontSizePX + " quicksandregular";
-      // ctx.clearRect(x, 0, 60, 150);
-      ctx.setLineDash([dashLen - dashOffset, dashOffset - speed]); // create a long dash mask
-      dashOffset -= speed;                                         // reduce dash length
-      ctx.strokeText(txt[i], x, y);                               // stroke letter
-
-      if (dashOffset > 0) requestAnimationFrame(loop);             // animate
-      else {
-        ctx.fillText(txt[i], x, y);                               // fill final letter
-        dashOffset = dashLen;                                      // prep next char
-        x += ctx.measureText(txt[i++]).width + ctx.lineWidth * Math.random();
-        // ctx.setTransform(1, 0, 0, 1, 0, 3 * Math.random());        // random y-delta
-        // ctx.rotate(Math.random() * 0.005);                         // random rotation
-        if (i < txt.length) {
-          requestAnimationFrame(loop);
-        } else {
-          sleep(1500).then(() => {
-            callback(txt);
-            return;
-          });
-          
-        }
-      }
-    })();
+    this.animateTextAlpha(text, font, i, -1, x, y, alpha, callback);
   }
 
   render() {    
