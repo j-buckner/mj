@@ -68,14 +68,23 @@ class Page extends React.Component {
     this.animateDisplayGroup(options[index], indexToX[index], window.innerHeight - 300, 0, 0, '30px')
   }
 
+  // animateFadeOut
+
   fadeOutText(text) {
+    // letterXPos + ctx.measureText(text[letterIndex++]).width + ctx.lineWidth;
+    // for (let letter of text) {
+    //     console.log(ch.codePointAt(0).toString(16));
+    // }
+    // console.log(text);
+    // console.log(ctx);
+    // this.animateFadeOutText(text);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     this.props.pageTransition();
     return;
   }
 
-  animateTextAlpha(text, font, letterIndex, prevLetterXPos, letterXPos, letterYPos, letterAlpha, callback) {
-
+  animateTextAlpha(text, font, xPosStart, letterIndex, prevLetterXPos, letterXPos, letterYPos, letterAlpha, callback) {
+    ctx.clearRect(letterXPos, 0, 60, 150);
     letterAlpha += 0.001;
     if (prevLetterXPos !== -1 ) {
 
@@ -114,15 +123,15 @@ class Page extends React.Component {
 
     if (letterAlpha < 0.02) {
       requestAnimationFrame(function () {
-        this.animateTextAlpha(text, font, letterIndex, prevLetterXPos, letterXPos, letterYPos, letterAlpha, callback);
+        this.animateTextAlpha(text, font, xPosStart, letterIndex, prevLetterXPos, letterXPos, letterYPos, letterAlpha, callback);
       }.bind(this));
     }
 
     if (letterAlpha >= 0.02 && letterAlpha < 1) {
       ctx.fillText(text[letterIndex], letterXPos, letterYPos);  
-      let nextLetterXPos = letterXPos + ctx.measureText(text[letterIndex++]).width + ctx.lineWidth * Math.random();
+      let nextLetterXPos = letterXPos + ctx.measureText(text[letterIndex++]).width + ctx.lineWidth;
       requestAnimationFrame(function () {
-        this.animateTextAlpha(text, font, letterIndex, letterXPos, nextLetterXPos, letterYPos, 0.005, callback);
+        this.animateTextAlpha(text, font, xPosStart, letterIndex, letterXPos, nextLetterXPos, letterYPos, 0.005, callback);
       }.bind(this));
     }
 
@@ -138,7 +147,7 @@ class Page extends React.Component {
     ctx.lineJoin = "round"; 
     ctx.fillStyle = "rgba(255, 255, 255, "+alpha+")";
 
-    this.animateTextAlpha(text, font, i, -1, x, y, alpha, callback);
+    this.animateTextAlpha(text, font, x, i, -1, x, y, alpha, callback);
   }
 
   render() {    
