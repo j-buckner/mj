@@ -20,8 +20,8 @@ class App extends Component {
     super();
 
     this.state = {
-      pageNum: 1,
-      displayData: pageNumToDisplayData[1],
+      pageNum: 3,
+      displayData: pageNumToDisplayData[3],
     };
 
     this.pageTransition = this.pageTransition.bind(this)  

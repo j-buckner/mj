@@ -2,7 +2,14 @@ import React from 'react';
 var canvas = document.getElementById('canvas-content');
 var ctx = canvas.getContext('2d');
 
-// var growTree = window.growTree;
+// ref
+  // // 4. Draw grahpics.
+  // context.fillStyle = "#009900";
+  // context.fillRect(10,10, 100,100);
+
+  // context.strokeStyle = "#0000ff";
+  // context.lineWidth   = 5;
+  // context.strokeRect(10,10, 100,100);
 
 function sleep (time) {
   return new Promise((resolve) => setTimeout(resolve, time));
@@ -33,37 +40,19 @@ class Page extends React.Component {
 
   // drawTreeAnimate(transformX, transformY) {
 
-  //   if (transformY < 100) return;
-  //   console.log(transformY);
 
-  //   let tree = new window.createjs.Shape();
-  //   tree.graphics.f().s("#1B1D21").ss(8,1);
-  //   tree.setTransform(transformX, transformY);
 
-  //   window.stage.addChild(tree);
-  //   window.stage.update();
-
-  //   this.drawTreeAnimate(transformX, transformY - 3.2)
+  //   // this.drawTreeAnimate(transformX, transformY - 3.2)
   // }
 
   drawTree(x, y) {
 
-    // Tree
+    console.log(x , y);
+    ctx.strokeStyle = "#1B1D21";
+    ctx.fillStyle = "#1B1D21";
 
-    // this.drawTreeAnimate(x, y - 3.2);
-
-    // this.shape = new cjs.Shape();
-    // this.shape.graphics.f().s("#1B1D21").ss(8,1).p("AAAgWIAAAt");
-    // this.shape.setTransform(276,285.7);
-
-    // let tree = new Graphics();
-    // ctx.beginFill();
-    // ctx.beginStroke("#1B1D21");
-    // ctx.setStrokeStyle(8, 1);
-    // ctx.setTransform(276,285.7);
-
-    
-
+    ctx.fillRect(x, y, 8, 10);
+    ctx.fillRect(x, y, 8, 25);
 
     return;
   }
