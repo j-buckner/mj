@@ -1,14 +1,16 @@
 import React from 'react';
 var canvas = document.getElementById('canvas-content');
-var ctx = canvas.getContext('2d');  
+var ctx = canvas.getContext('2d');
+
+// var growTree = window.growTree;
 
 function sleep (time) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
 
 class Page extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.drawCircle = this.drawCircle.bind(this);
     this.animateDisplayGroup = this.animateDisplayGroup.bind(this);
@@ -16,6 +18,7 @@ class Page extends React.Component {
     this.fadeOutText = this.fadeOutText.bind(this);
     this.animateTextAlpha = this.animateTextAlpha.bind(this);
     this.drawText = this.drawText.bind(this);
+
   }
 
   finishedDisplayOptions() {
@@ -23,8 +26,46 @@ class Page extends React.Component {
   }
 
   animateDisplayGroup(option, x, y, current, curPerc, fontSizePX) {
-    this.drawCircle(option, x + 60, y, current, curPerc);
-    this.drawText(option, fontSizePX, x, window.innerHeight - 100, this.displayOptions);
+    // this.drawCircle(option, x + 60, y, current, curPerc);
+    // this.drawText(option, fontSizePX, x, window.innerHeight - 100, this.displayOptions);
+    this.drawTree(x + 100, y + 20);
+  }
+
+  // drawTreeAnimate(transformX, transformY) {
+
+  //   if (transformY < 100) return;
+  //   console.log(transformY);
+
+  //   let tree = new window.createjs.Shape();
+  //   tree.graphics.f().s("#1B1D21").ss(8,1);
+  //   tree.setTransform(transformX, transformY);
+
+  //   window.stage.addChild(tree);
+  //   window.stage.update();
+
+  //   this.drawTreeAnimate(transformX, transformY - 3.2)
+  // }
+
+  drawTree(x, y) {
+
+    // Tree
+
+    // this.drawTreeAnimate(x, y - 3.2);
+
+    // this.shape = new cjs.Shape();
+    // this.shape.graphics.f().s("#1B1D21").ss(8,1).p("AAAgWIAAAt");
+    // this.shape.setTransform(276,285.7);
+
+    // let tree = new Graphics();
+    // ctx.beginFill();
+    // ctx.beginStroke("#1B1D21");
+    // ctx.setStrokeStyle(8, 1);
+    // ctx.setTransform(276,285.7);
+
+    
+
+
+    return;
   }
 
   drawCircle(option, x, y, current, curPerc) {
@@ -84,7 +125,8 @@ class Page extends React.Component {
   }
 
   animateTextAlpha(text, font, xPosStart, letterIndex, prevLetterXPos, letterXPos, letterYPos, letterAlpha, callback) {
-    ctx.clearRect(letterXPos, 0, 60, 150);
+    // ctx.clearRect(letterXPos, 0, 60, 150);
+    // console.log(window.stage);
     letterAlpha += 0.001;
     if (prevLetterXPos !== -1 ) {
 
@@ -121,6 +163,8 @@ class Page extends React.Component {
     ctx.font = font;
     ctx.fillText(text[letterIndex], letterXPos, letterYPos);
 
+    // window.stage.update();
+
     if (letterAlpha < 0.02) {
       requestAnimationFrame(function () {
         this.animateTextAlpha(text, font, xPosStart, letterIndex, prevLetterXPos, letterXPos, letterYPos, letterAlpha, callback);
@@ -150,7 +194,8 @@ class Page extends React.Component {
     this.animateTextAlpha(text, font, x, i, -1, x, y, alpha, callback);
   }
 
-  render() {    
+  render() {
+
     let callback = (this.props.pageNum === 3) ? this.displayOptions : this.fadeOutText;
 
     let x = (window.innerWidth / 2) - 450;
@@ -162,7 +207,7 @@ class Page extends React.Component {
       y = 100;
       x = (window.innerWidth / 2) - 320;
     } 
-    
+
     this.drawText(this.props.displayData.mainText, fontSizePX, x, y, callback);
     return (
       <div></div>

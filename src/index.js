@@ -4,7 +4,6 @@ import App from './App';
 import './index.css';
 
 const rootEl = document.getElementById('root');
-
 ReactDOM.render(
   <App />,
   rootEl
